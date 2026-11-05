@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    env:
+      TAP_TOKEN: ${{ secrets.TAP_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Test
+        run: swift test
+      - name: Build
+        run: scripts/build.sh "${GITHUB_REF_NAME#v}"
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/Fidget-$V.zip" "dist/fidget-cli-$V.tar.gz" dist/SHA256SUMS \
+            --title "Fidget $V" --generate-notes
+      - name: Update Homebrew tap
+        if: env.TAP_TOKEN != ''
+        run: scripts/update-tap.sh "${GITHUB_REF_NAME#v}" dist/SHA256SUMS

@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Toolchain
+        run: swift --version
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
+      - name: Package app
+        run: scripts/build.sh 0.0.0-ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fidget-ci
+          path: |
+            dist/*.zip
+            dist/*.tar.gz
