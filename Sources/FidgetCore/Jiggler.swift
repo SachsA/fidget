@@ -13,7 +13,7 @@ public enum EngineState: Equatable {
 /// The engine: checks user inactivity every couple of seconds and nudges the mouse when needed.
 @MainActor
 public final class Jiggler {
-    public private(set) var settings: Settings
+    public private(set) var settings: FidgetSettings
     public private(set) var state: EngineState = .disabled
     public private(set) var lastJiggle: Date?
 
@@ -24,11 +24,11 @@ public final class Jiggler {
     private let sleepGuard = PowerAssertion()
     private var activityID: IOPMAssertionID = 0
 
-    public init(settings: Settings) {
+    public init(settings: FidgetSettings) {
         self.settings = settings.clamped()
     }
 
-    public func update(settings: Settings) {
+    public func update(settings: FidgetSettings) {
         self.settings = settings.clamped()
         tick()
     }

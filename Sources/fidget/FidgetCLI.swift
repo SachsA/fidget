@@ -120,8 +120,8 @@ struct FidgetCLI {
 
         switch sub {
         case "reset":
-            store.save(Settings())
-            printSettings(Settings())
+            store.save(FidgetSettings())
+            printSettings(FidgetSettings())
         case "set":
             guard args.count == 3 else { fail("usage: fidget config set KEY VALUE") }
             var s = store.load()
@@ -133,7 +133,7 @@ struct FidgetCLI {
         }
     }
 
-    static func apply(key: String, value: String, to s: inout Settings) {
+    static func apply(key: String, value: String, to s: inout FidgetSettings) {
         switch key {
         case "interval":
             guard let v = TimeInterval(value) else { fail("interval expects seconds") }
@@ -167,7 +167,7 @@ struct FidgetCLI {
         }
     }
 
-    static func printSettings(_ s: Settings) {
+    static func printSettings(_ s: FidgetSettings) {
         let onOff: (Bool) -> String = { $0 ? "on" : "off" }
         print("""
         enabled        \(onOff(s.enabled))

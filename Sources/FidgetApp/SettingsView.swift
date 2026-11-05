@@ -23,7 +23,7 @@ struct SettingsView: View {
                     Text("Zen (cursor stays still)").tag(JiggleMode.zen)
                 }
                 if model.settings.mode == .visible {
-                    Stepper(value: $model.settings.distance, in: Settings.distanceRange) {
+                    Stepper(value: $model.settings.distance, in: FidgetSettings.distanceRange) {
                         Text("Distance: \(model.settings.distance) px")
                     }
                 }

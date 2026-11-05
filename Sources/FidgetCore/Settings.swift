@@ -43,7 +43,7 @@ public struct Hotkey: Codable, Equatable {
     }
 }
 
-public struct Settings: Codable, Equatable {
+public struct FidgetSettings: Codable, Equatable {
     public var enabled = true
     /// Seconds of user inactivity before Fidget nudges the mouse.
     public var idleInterval: TimeInterval = 60
@@ -63,7 +63,7 @@ public struct Settings: Codable, Equatable {
     public init() {}
 
     /// Returns a copy with every value brought back into its valid range.
-    public func clamped() -> Settings {
+    public func clamped() -> FidgetSettings {
         var s = self
         s.idleInterval = min(max(idleInterval, Self.idleRange.lowerBound), Self.idleRange.upperBound)
         s.distance = min(max(distance, Self.distanceRange.lowerBound), Self.distanceRange.upperBound)
@@ -80,7 +80,7 @@ public struct Settings: Codable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        let d = Settings()
+        let d = FidgetSettings()
         enabled = try c.decodeIfPresent(Bool.self, forKey: .enabled) ?? d.enabled
         idleInterval = try c.decodeIfPresent(TimeInterval.self, forKey: .idleInterval) ?? d.idleInterval
         distance = try c.decodeIfPresent(Int.self, forKey: .distance) ?? d.distance
@@ -110,15 +110,15 @@ public final class SettingsStore {
         }
     }
 
-    public func load() -> Settings {
+    public func load() -> FidgetSettings {
         guard let data = defaults.data(forKey: Self.key),
-              let s = try? JSONDecoder().decode(Settings.self, from: data) else {
-            return Settings()
+              let s = try? JSONDecoder().decode(FidgetSettings.self, from: data) else {
+            return FidgetSettings()
         }
         return s.clamped()
     }
 
-    public func save(_ settings: Settings) {
+    public func save(_ settings: FidgetSettings) {
         guard let data = try? JSONEncoder().encode(settings.clamped()) else { return }
         defaults.set(data, forKey: Self.key)
         defaults.synchronize()

@@ -3,7 +3,7 @@ import FidgetCore
 
 @MainActor
 final class AppModel: ObservableObject {
-    @Published var settings: Settings {
+    @Published var settings: FidgetSettings {
         didSet {
             guard settings != oldValue else { return }
             apply(previous: oldValue)
@@ -39,7 +39,7 @@ final class AppModel: ObservableObject {
         if !Accessibility.isTrusted { Accessibility.request() }
     }
 
-    private func apply(previous: Settings) {
+    private func apply(previous: FidgetSettings) {
         store.save(settings)
         jiggler.update(settings: settings)
         if settings.hotkeyEnabled != previous.hotkeyEnabled || settings.hotkey != previous.hotkey {

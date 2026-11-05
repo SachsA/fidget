@@ -71,30 +71,30 @@ final class ScheduleTests: XCTestCase {
 final class SettingsTests: XCTestCase {
     func testDecodingMissingKeysFallsBackToDefaults() throws {
         let json = #"{"idleInterval": 30, "mode": "zen"}"#.data(using: .utf8)!
-        let s = try JSONDecoder().decode(Settings.self, from: json)
+        let s = try JSONDecoder().decode(FidgetSettings.self, from: json)
         XCTAssertEqual(s.idleInterval, 30)
         XCTAssertEqual(s.mode, .zen)
-        XCTAssertEqual(s.distance, Settings().distance)
+        XCTAssertEqual(s.distance, FidgetSettings().distance)
         XCTAssertEqual(s.hotkey, .default)
     }
 
     func testUnknownModeFallsBackToDefault() throws {
         let json = #"{"mode": "teleport"}"#.data(using: .utf8)!
-        XCTAssertEqual(try JSONDecoder().decode(Settings.self, from: json).mode, .visible)
+        XCTAssertEqual(try JSONDecoder().decode(FidgetSettings.self, from: json).mode, .visible)
     }
 
     func testClamping() {
-        var s = Settings()
+        var s = FidgetSettings()
         s.idleInterval = 1
         s.distance = 500
-        XCTAssertEqual(s.clamped().idleInterval, Settings.idleRange.lowerBound)
-        XCTAssertEqual(s.clamped().distance, Settings.distanceRange.upperBound)
+        XCTAssertEqual(s.clamped().idleInterval, FidgetSettings.idleRange.lowerBound)
+        XCTAssertEqual(s.clamped().distance, FidgetSettings.distanceRange.upperBound)
     }
 
     func testRoundTripThroughStore() {
         let defaults = UserDefaults(suiteName: "fidget-tests-\(UUID().uuidString)")!
         let store = SettingsStore(defaults: defaults)
-        var s = Settings()
+        var s = FidgetSettings()
         s.idleInterval = 120
         s.schedule.enabled = true
         store.save(s)
